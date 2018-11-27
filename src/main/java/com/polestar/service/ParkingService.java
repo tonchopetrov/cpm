@@ -1,9 +1,7 @@
 package com.polestar.service;
 
 import com.polestar.model.ParkingPlace;
-import com.polestar.model.ParkingSpace;
 
-import java.util.List;
 
 public interface ParkingService {
 

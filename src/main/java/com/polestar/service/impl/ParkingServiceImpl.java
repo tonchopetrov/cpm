@@ -1,5 +1,6 @@
 package com.polestar.service.impl;
 
+import com.polestar.model.ParkingCommand;
 import com.polestar.model.ParkingPlace;
 import com.polestar.model.ParkingSpace;
 import com.polestar.model.Ticket;
@@ -7,6 +8,7 @@ import com.polestar.repository.ParkingPlaceRepository;
 import com.polestar.repository.ParkingRepository;
 import com.polestar.service.ParkingService;
 import com.polestar.service.TicketService;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
+@NoArgsConstructor
 public class ParkingServiceImpl implements ParkingService {
 
     private final Integer PARKING_ID = 1;
@@ -54,17 +57,34 @@ public class ParkingServiceImpl implements ParkingService {
         ParkingSpace createdSpace = parkingRepository.save(space);
         log.debug("create new space with id:{} name:{}",createdSpace.getId(),createdSpace.getParkingName());
 
-        parkCar("y 1 an");
-        parkCar("y 2 an");
-        parkCar("y 3 an");
-        unparkCar(5001);
-        optimizeParkingSpaces();
-        unparkCar(5000);
-        optimizeParkingSpaces();
 
+        List<ParkingCommand> parkingCommands = new ArrayList<>();
 
+        String input = "pABC,pXYZ,pEFG,u5000,u5001,c";
 
-        System.out.println();
+        String[] sArr = input.split(",");
+        ParkingCommand parkingCommand = null;
+        for(String string : sArr ){
+            char command = string.charAt(0);
+            parkingCommand = new ParkingCommand();
+            parkingCommand.setSymbol(command);
+            if(command != 'c'){
+                parkingCommand.setPlate( string.substring(1));
+
+            }
+            parkingCommands.add(parkingCommand);
+        }
+
+        for(ParkingCommand p : parkingCommands){
+            switch (p.getSymbol()){
+                case 'c': optimizeParkingSpaces();
+                    System.out.println(p.getSymbol());break;
+                case 'p': parkCar(p.getPlate());
+                    System.out.println(p.getSymbol()+p.getPlate());break;
+                case 'u': unparkCar(Integer.valueOf(p.getPlate()));
+                    System.out.println(p.getSymbol()+p.getPlate());break;
+            }
+        }
 
     }
 
@@ -168,10 +188,5 @@ public class ParkingServiceImpl implements ParkingService {
             }
         }
         return place;
-    }
-
-    private ParkingSpace getParking(Integer id){
-
-        return parkingRepository.findOne(id);
     }
 }

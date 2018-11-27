@@ -3,6 +3,7 @@ package com.polestar.service.impl;
 import com.polestar.model.Ticket;
 import com.polestar.repository.TicketRepository;
 import com.polestar.service.TicketService;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import javax.annotation.PostConstruct;
 
 @Slf4j
 @Service
+@NoArgsConstructor
 public class TicketServiceImpl implements TicketService {
 
     private final Integer TICKET_ID = 1;
