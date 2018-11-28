@@ -7,6 +7,7 @@ import com.polestar.repository.ParkingPlaceRepository;
 import com.polestar.repository.ParkingRepository;
 import com.polestar.service.ParkingService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,11 +58,14 @@ public class ParkingCommandsTest {
         for(ParkingCommand p : parkingCommands){
             switch (p.getSymbol()){
                 case 'c': parkingService.optimizeParkingSpaces();
-                    System.out.print(", "+p.getSymbol());break;
-                case 'p': parkingService.parkCar(p.getPlate());
-                    System.out.print(p.getSymbol()+" "+p.getPlate()+", ");break;
-                case 'u': parkingService.unparkCar(Integer.valueOf(p.getPlate()));
-                    System.out.print(p.getSymbol()+" "+p.getPlate()+", ");break;
+                    break;
+                case 'p':
+                    Assert.assertTrue("car with plate:"+p.getPlate()+" was parked",parkingService.parkCar(p.getPlate()));
+                    break;
+                case 'u':
+                    Assert.assertTrue("car with plate:"+p.getPlate()+" was unpark",
+                            parkingService.unparkCar(Integer.valueOf(p.getPlate())));
+                    break;
             }
         }
     }

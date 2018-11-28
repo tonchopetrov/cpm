@@ -57,35 +57,6 @@ public class ParkingServiceImpl implements ParkingService {
         ParkingSpace createdSpace = parkingRepository.save(space);
         log.debug("create new space with id:{} name:{}",createdSpace.getId(),createdSpace.getParkingName());
 
-
-        List<ParkingCommand> parkingCommands = new ArrayList<>();
-
-        String input = "pABC,pXYZ,pEFG,u5000,u5001,c";
-
-        String[] sArr = input.split(",");
-        ParkingCommand parkingCommand = null;
-        for(String string : sArr ){
-            char command = string.charAt(0);
-            parkingCommand = new ParkingCommand();
-            parkingCommand.setSymbol(command);
-            if(command != 'c'){
-                parkingCommand.setPlate( string.substring(1));
-
-            }
-            parkingCommands.add(parkingCommand);
-        }
-
-        for(ParkingCommand p : parkingCommands){
-            switch (p.getSymbol()){
-                case 'c': optimizeParkingSpaces();
-                    System.out.println(p.getSymbol());break;
-                case 'p': parkCar(p.getPlate());
-                    System.out.println(p.getSymbol()+p.getPlate());break;
-                case 'u': unparkCar(Integer.valueOf(p.getPlate()));
-                    System.out.println(p.getSymbol()+p.getPlate());break;
-            }
-        }
-
     }
 
     @Override
@@ -107,7 +78,7 @@ public class ParkingServiceImpl implements ParkingService {
     }
 
     @Override
-    public ParkingPlace parkCar(String plate) {
+    public boolean parkCar(String plate) {
         ParkingSpace space = parkingRepository.findOne(PARKING_ID);
 
         if(space != null){
@@ -124,11 +95,11 @@ public class ParkingServiceImpl implements ParkingService {
                 placeRepository.save(parkingPlace);
                 parkingRepository.save(space);
 
-                return parkingPlace;
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
     @Override
@@ -164,12 +135,13 @@ public class ParkingServiceImpl implements ParkingService {
         ParkingPlace place = null;
         for (int i = 0; i < places.size() ; i++) {
             place  = places.get(i);
-            if(place.getTicketNum().intValue() == ticketNum.intValue()){
+            if(place.getTicketNum() != null && place.getTicketNum().intValue() == ticketNum.intValue()){
                 ParkingSpace space = parkingRepository.findOne(PARKING_ID);
                 space.getParkingPlaces().remove(place);
-                parkingRepository.save(space);
 
+                parkingRepository.save(space);
                 placeRepository.delete(place);
+
                 return true;
             }
         }
