@@ -40,7 +40,7 @@ public class ParkingCommandsTest {
 
         List<ParkingCommand> parkingCommands = new ArrayList<>();
 
-        String input = "pABC,pXYZ,pEFG,u5000,c";
+        String input = "pABC,pXYZ,pEFG,u5002,c";
 
         String[] sArr = input.split(",");
         ParkingCommand parkingCommand = null;
@@ -68,5 +68,18 @@ public class ParkingCommandsTest {
                     break;
             }
         }
+
+
+        ParkingSpace parkingSpace = parkingRepository.findOne(1);
+        ParkingPlace placeOne = parkingSpace.getParkingPlaces().get(0);
+
+        Assert.assertTrue("The place is busy",placeOne.isBusy());
+        Assert.assertTrue("The plate is parked in the garage",placeOne.getCarPlate().equals("ABC"));
+        Assert.assertTrue("The first ticket num is 5000",placeOne.getTicketNum().intValue() == 5000);
+
+        ParkingPlace secondParkingPlace = parkingSpace.getParkingPlaces().get(1);
+        Assert.assertTrue("The second ticket num is 5001",secondParkingPlace.getTicketNum().intValue() == 5001);
+        Assert.assertTrue("The place is busy",secondParkingPlace.isBusy());
+
     }
 }
